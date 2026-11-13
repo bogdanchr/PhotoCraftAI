@@ -63,7 +63,7 @@ These are **preliminary setup steps**, not a verified clean-machine installation
 
 1. Install PhotoCraft, ComfyUI, Ollama, and the necessary models/nodes separately, according to their own documentation.
 2. Clone or download this repository and open a terminal in its root directory.
-3. Create a Python virtual environment and install the project's Python requirements:
+3. Create a Python virtual environment and install the dependencies:
 
    ```powershell
    py -m venv venv
@@ -95,6 +95,11 @@ The launcher currently expects a specific local installation layout and service 
 
 Feedback, bug reports, documentation improvements, and pull requests are welcome once the repository is published. Please avoid submitting private photos, personal file paths, credentials, tokens, or proprietary model files in issues and pull requests.
 
+
 ## License and attribution
 
-**License selection is pending.** A repository license will be added after reviewing third-party dependencies and attribution requirements. This project does not claim ownership of PhotoCraft, ComfyUI, Ollama, or third-party AI models. Their licenses and terms apply separately.
+PhotoCraft AI is released under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+**Copyright (c) 2026 Bogdan Chrobak**
+
+The MIT License applies to the PhotoCraft AI integration code. The PhotoCraft editor, ComfyUI, Ollama, and external AI models are separate projects governed by their own licenses and terms.

@@ -97,4 +97,8 @@ Po opublikowaniu repozytorium mile widziane będą zgłoszenia błędów, popraw
 
 ## Licencja i autorstwo
 
-**Wybór licencji jest jeszcze przed nami.** Dodamy ją po sprawdzeniu zależności i wymagań dotyczących oznaczenia autorstwa innych projektów. PhotoCraft AI nie rości sobie praw do edytora PhotoCraft, ComfyUI, Ollama ani zewnętrznych modeli AI. Obowiązują je odrębne licencje i warunki.
+Projekt PhotoCraft AI jest udostępniany na licencji **MIT**. Szczegółowe warunki znajdują się w pliku [LICENSE](LICENSE).
+
+**Copyright (c) 2026 Bogdan Chrobak**
+
+Licencja MIT dotyczy kodu integracyjnego PhotoCraft AI. Edytor PhotoCraft, ComfyUI, Ollama oraz zewnętrzne modele AI pozostają odrębnymi projektami, podlegającymi własnym licencjom i warunkom użytkowania.
