@@ -1,0 +1,57 @@
+
+# Python - srodowiska i cache
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Kopie zapasowe
+kopia zapasowa/
+backups/
+backup/
+*.bak
+
+# Modele AI i duze pliki wag
+models/
+checkpoints/
+*.safetensors
+*.ckpt
+*.pth
+*.pt
+*.onnx
+*.gguf
+
+# Pliki wygenerowane i robocze
+exports/
+outputs/
+temp/
+tmp/
+*.log
+
+# Dane prywatne i konfiguracja lokalna
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets.json
+
+# Pliki systemowe i edytora
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Lokalne pliki diagnostyczne
+podglad.png
+wynik_importu.txt
+
+# Wyniki segmentacji i wycinania
+comfy_bridge/wyniki_birefnet/
+comfy_bridge/wyniki_sam3/
+
+# Lokalna konfiguracja uzytkownika
+local_config.bat

@@ -1,0 +1,67 @@
+{
+  "8": {
+    "class_type": "AutoDownloadBiRefNetModel",
+    "inputs": {
+      "model_name": "General",
+      "device": "AUTO",
+      "dtype": "float32"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "1 min.jpg"
+    }
+  },
+  "7": {
+    "class_type": "RembgByBiRefNet",
+    "inputs": {
+      "model": [
+        "8",
+        0
+      ],
+      "images": [
+        "2",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "BiRefNet/cutout",
+      "images": [
+        "7",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "MaskToImage",
+    "inputs": {
+      "mask": [
+        "7",
+        1
+      ]
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "BiRefNet/mask",
+      "images": [
+        "10",
+        0
+      ]
+    }
+  },
+  "12": {
+    "class_type": "PreviewImage",
+    "inputs": {
+      "images": [
+        "7",
+        0
+      ]
+    }
+  }
+}

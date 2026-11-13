@@ -1,0 +1,260 @@
+{
+  "1": {
+    "inputs": {
+      "image": "group-min.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "115": {
+    "inputs": {
+      "mask": [
+        "114:75",
+        0
+      ]
+    },
+    "class_type": "MaskPreview",
+    "_meta": {
+      "title": "Preview Mask",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "121": {
+    "inputs": {
+      "mask": [
+        "119:116",
+        0
+      ]
+    },
+    "class_type": "MaskPreview",
+    "_meta": {
+      "title": "Preview Mask",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "125": {
+    "inputs": {
+      "mask": [
+        "126",
+        0
+      ]
+    },
+    "class_type": "MaskPreview",
+    "_meta": {
+      "title": "Preview Mask",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "126": {
+    "inputs": {
+      "x": 0,
+      "y": 0,
+      "operation": "or",
+      "destination": [
+        "115",
+        0
+      ],
+      "source": [
+        "121",
+        0
+      ]
+    },
+    "class_type": "MaskComposite",
+    "_meta": {
+      "title": "Combine Masks",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "128": {
+    "inputs": {
+      "mask": [
+        "133",
+        0
+      ]
+    },
+    "class_type": "InvertMask",
+    "_meta": {
+      "title": "Invert Mask",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "129": {
+    "inputs": {
+      "image": [
+        "1",
+        0
+      ],
+      "alpha": [
+        "128",
+        0
+      ]
+    },
+    "class_type": "JoinImageWithAlpha",
+    "_meta": {
+      "title": "Join Image with Alpha",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "131": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "format": "png",
+      "format.bit_depth": "8-bit",
+      "format.input_color_space": "sRGB",
+      "images": [
+        "129",
+        0
+      ]
+    },
+    "class_type": "SaveImageAdvanced",
+    "_meta": {
+      "title": "Save Image (Advanced)",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "133": {
+    "inputs": {
+      "amount": 2,
+      "device": "auto",
+      "mask": [
+        "134",
+        0
+      ]
+    },
+    "class_type": "MaskBlur+",
+    "_meta": {
+      "title": "🔧 Mask Blur",
+      "cnr_id": "comfyui_essentials",
+      "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9"
+    }
+  },
+  "134": {
+    "inputs": {
+      "expand": 1,
+      "tapered_corners": true,
+      "mask": [
+        "126",
+        0
+      ]
+    },
+    "class_type": "GrowMask",
+    "_meta": {
+      "title": "Grow Mask",
+      "cnr_id": "comfy-core",
+      "ver": "0.43.2"
+    }
+  },
+  "114:75": {
+    "inputs": {
+      "threshold": 0.5,
+      "refine_iterations": 1,
+      "individual_masks": true,
+      "model": [
+        "114:77",
+        0
+      ],
+      "image": [
+        "1",
+        0
+      ],
+      "conditioning": [
+        "114:78",
+        0
+      ]
+    },
+    "class_type": "SAM3_Detect",
+    "_meta": {
+      "title": "SAM3 Detect",
+      "cnr_id": "comfy-core",
+      "ver": "0.19.3"
+    }
+  },
+  "114:77": {
+    "inputs": {
+      "ckpt_name": "sam3.1_multiplex_fp16.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint",
+      "cnr_id": "comfy-core",
+      "ver": "0.19.3"
+    }
+  },
+  "114:78": {
+    "inputs": {
+      "text": "phone\n",
+      "clip": [
+        "114:77",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)",
+      "cnr_id": "comfy-core",
+      "ver": "0.19.3"
+    }
+  },
+  "119:116": {
+    "inputs": {
+      "threshold": 0.5,
+      "refine_iterations": 1,
+      "individual_masks": true,
+      "model": [
+        "119:117",
+        0
+      ],
+      "image": [
+        "1",
+        0
+      ],
+      "conditioning": [
+        "119:118",
+        0
+      ]
+    },
+    "class_type": "SAM3_Detect",
+    "_meta": {
+      "title": "SAM3 Detect",
+      "cnr_id": "comfy-core",
+      "ver": "0.19.3"
+    }
+  },
+  "119:117": {
+    "inputs": {
+      "ckpt_name": "sam3.1_multiplex_fp16.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint",
+      "cnr_id": "comfy-core",
+      "ver": "0.19.3"
+    }
+  },
+  "119:118": {
+    "inputs": {
+      "text": "blonde woman\n",
+      "clip": [
+        "119:117",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)",
+      "cnr_id": "comfy-core",
+      "ver": "0.19.3"
+    }
+  }
+}

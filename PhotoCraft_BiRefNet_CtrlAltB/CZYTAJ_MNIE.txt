@@ -1,0 +1,35 @@
+PHOTOCRAFT AI - BiRefNet - CTRL+ALT+B
+====================================
+
+Instalacja skrotu klawiaturowego
+
+1. Zainstaluj PhotoCraft AI zgodnie z glownym README.md.
+2. Upewnij sie, ze folder PhotoCraft_BiRefNet_CtrlAltB
+   znajduje sie w katalogu glownym PhotoCraft AI.
+3. Uruchom ZAINSTALUJ_SKROT.bat (bez administratora).
+4. Na pulpicie pojawi sie skrot:
+   "PhotoCraft - Wytnij tlo BiRefNet".
+
+Uzywanie
+
+1. Uruchom PhotoCraft AI przez PhotoCraft_AI.bat.
+2. Otworz zdjecie w edytorze PhotoCraft.
+3. Nacisnij Ctrl+Alt+B.
+
+Skrot uruchamia BiRefNet v1.4.
+Ponowne nacisniecie podczas pracy jest ignorowane.
+Dodatkowy dokument PNG z wycieciem moze pozostac otwarty.
+
+Rozwiazywanie problemow
+
+- Sprobuj uruchomic skrot dwuklikiem na pulpicie.
+- Sprawdz Wlasciwosci skrotu -> Klawisz skrotu.
+- Upewnij sie, ze PhotoCraft, MCP i ComfyUI dzialaja.
+- Sprawdz logi w katalogu comfy_bridge\logs.
+
+Usuwanie skrotu
+
+Usun z pulpitu:
+"PhotoCraft - Wytnij tlo BiRefNet".
+
+Skrypt pomocniczy znajduje sie w shortcuts\Uruchom_BiRefNet.ps1.
