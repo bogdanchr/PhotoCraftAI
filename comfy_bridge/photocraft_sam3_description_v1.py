@@ -145,7 +145,7 @@ async def main(description):
     input_name = "pc_sam3_input_" + token + ".png"
     input_path = EXPORT_DIR / input_name
     print("1/5 Kontrola otwartego zdjęcia i eksport...", flush=True)
-    async with streamable_http_client(MCP_URL) as (read, write):
+    async with streamable_http_client(MCP_URL) as (read, write, _):
         async with ClientSession(read, write) as session:
             await session.initialize()
             exposed = {x.name for x in (await session.list_tools()).tools}

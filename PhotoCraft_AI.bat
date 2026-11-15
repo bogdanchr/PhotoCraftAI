@@ -7,7 +7,6 @@ rem Programy juz uruchomione sa pomijane.
 set "BASE=%~dp0"
 
 rem Domyslne ustawienia
-set "OLD=C:\OpenWebUI"
 set "PC=C:\Program Files\PhotoCraft"
 set "EXPORT_DIR=%BASE%exports"
 set "IMPORT_DIR=%BASE%import"
@@ -17,7 +16,7 @@ rem Wczytaj lokalne ustawienia uzytkownika
 if exist "%BASE%local_config.bat" call "%BASE%local_config.bat"
 
 rem Sciezki i zmienne wyliczane po wczytaniu konfiguracji
-set "TOKEN_FILE=%OLD%\photocraft-token.txt"
+set "TOKEN_FILE=%BASE%photocraft-token.txt"
 set "PHOTOCRAFT_EXPORT_DIR=%EXPORT_DIR%"
 set "PHOTOCRAFT_IMPORT_DIR=%IMPORT_DIR%"
 set "COMFY_PY=%COMFY_ROOT%\python_embeded\python.exe"
@@ -102,14 +101,14 @@ if "%PORT_OPEN%"=="1" goto mcp_ready
 call :port_open 8765
 if not "%PORT_OPEN%"=="1" goto mcp_no_photo
 if not exist "%PC%\photocraft-cli.exe" goto mcp_no_cli
-if not exist "%OLD%\venv\Scripts\activate.bat" goto mcp_no_venv
+if not exist "%BASE%venv\Scripts\mcp-proxy.exe" goto mcp_no_venv
 if not exist "%TOKEN_FILE%" goto token_missing
 call :load_token
 if not defined PHOTOCRAFT_CONTROL_TOKEN goto token_empty
 echo   [START] MCP proxy
 >>"%LOG%" echo MCP: start
 rem Nie podawaj --automation-root do cli mcp --bridge (odrzucane przez PhotoCraft).
-start "PhotoCraft MCP" cmd /k ""%OLD%\venv\Scripts\activate.bat" && mcp-proxy --host 127.0.0.1 --port 8766 --pass-environment -- "%PC%\photocraft-cli.exe" mcp --bridge 127.0.0.1:8765"
+start "PhotoCraft MCP" cmd /k ""%BASE%venv\Scripts\mcp-proxy.exe" --host 127.0.0.1 --port 8766 --pass-environment -- "%PC%\photocraft-cli.exe" mcp --bridge 127.0.0.1:8765"
 call :wait_port 8766 15
 exit /b 0
 :mcp_ready
@@ -125,7 +124,7 @@ echo   [BLAD] Brak photocraft-cli.exe
 >>"%LOG%" echo MCP: CLI missing
 exit /b 0
 :mcp_no_venv
-echo   [BLAD] Brak srodowiska "%OLD%\venv"
+echo   [BLAD] Brak MCP Proxy w "%BASE%venv\Scripts"
 >>"%LOG%" echo MCP: venv missing
 exit /b 0
 
@@ -135,7 +134,8 @@ call :port_open 8188
 if "%PORT_OPEN%"=="1" goto comfy_ready
 rem Nie odpalaj ponownie podczas ladowania: szukaj procesu po sciezce do main.py.
 rem PowerShell odpalany poza blokiem IF, aby blad skladni nie przerwal calego BAT.
-powershell.exe -NoProfile -NonInteractive -Command "$p=Get-CimInstance Win32_Process -Filter 'Name = ''python.exe'' OR Name = ''pythonw.exe''' -ErrorAction SilentlyContinue; if (@($p | Where-Object { $_.CommandLine -match 'ComfyUI[\\/]main\.py' -and $_.CommandLine -match 'ComfyUI_flux' }).Count -gt 0) { exit 0 } else { exit 1 }" >nul 2>nul
+set "COMFY_ROOT_CHECK=%COMFY_ROOT%"
+powershell.exe -NoProfile -NonInteractive -Command "$p=Get-CimInstance Win32_Process -Filter 'Name = ''python.exe'' OR Name = ''pythonw.exe''' -ErrorAction SilentlyContinue; if (@($p | Where-Object { $_.CommandLine -match 'ComfyUI[\\/]main\.py' -and $_.CommandLine -like ('*' + $env:COMFY_ROOT_CHECK + '*') }).Count -gt 0) { exit 0 } else { exit 1 }" >nul 2>nul
 if not errorlevel 1 goto comfy_loading
 if not exist "%COMFY_PY%" goto comfy_no_python
 if not exist "%COMFY_MAIN%" goto comfy_no_main

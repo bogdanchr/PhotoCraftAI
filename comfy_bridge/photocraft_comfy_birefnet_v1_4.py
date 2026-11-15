@@ -56,7 +56,7 @@ async def main():
     input_file = EXPORT_DIR / filename
     print("1/4 Sprawdzam PhotoCraft i eksportuje widoczny dokument...")
 
-    async with streamable_http_client(MCP_URL) as (read, write):
+    async with streamable_http_client(MCP_URL) as (read, write, _):
         async with ClientSession(read, write) as session:
             print("   MCP: inicjalizacja sesji...", flush=True)
             await session.initialize()

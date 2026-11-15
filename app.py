@@ -3278,7 +3278,7 @@ async def process_message(message, history):
         except Exception as error:
             return f"Nie udało się odczytać katalogu: {error}"
 
-    async with streamable_http_client(MCP_URL) as (read, write):
+    async with streamable_http_client(MCP_URL) as (read, write, _):
         async with ClientSession(read, write) as session:
             await session.initialize()
             # v3.3: płynne wtopienie dolnej krawędzi, tylko na istniejącej masce.
@@ -3396,7 +3396,7 @@ async def process_message(message, history):
                             "function": {
                                 "name": "photocraft_" + tool.name,
                                 "description": tool.description or "",
-                                "parameters": tool.input_schema,
+                                "parameters": tool.inputSchema,
                             },
                         }
                     )
@@ -3432,7 +3432,7 @@ async def process_message(message, history):
                                 "function": {
                                     "name": "photocraft_doc_new",
                                     "description": tool.description or "",
-                                    "parameters": tool.input_schema,
+                                    "parameters": tool.inputSchema,
                                 },
                             }
                         ]
@@ -3589,7 +3589,7 @@ def panel_sam3(first, second):
 
 async def _panel_analyze_photo():
     # Używa istniejącej funkcji Qwen3-VL, bez dodawania lub modyfikacji warstw.
-    async with streamable_http_client(MCP_URL) as (read, write):
+    async with streamable_http_client(MCP_URL) as (read, write, _):
         async with ClientSession(read, write) as session:
             await session.initialize()
             return await analyze_photo(session, "Oceń aktualne zdjęcie", set())
