@@ -103,3 +103,45 @@ PhotoCraft AI is released under the **MIT License**. See the [LICENSE](LICENSE) 
 **Copyright (c) 2026 Bogdan Chrobak**
 
 The MIT License applies to the PhotoCraft AI integration code. The PhotoCraft editor, ComfyUI, Ollama, and external AI models are separate projects governed by their own licenses and terms.
+
+---
+
+## Autorstwo i sposob tworzenia
+
+**Autor, pomyslodawca i opiekun projektu:**
+[@bogdanchr](https://github.com/bogdanchr)
+
+**Metoda rozwoju:** AI-assisted development / Vibe Coding
+z wykorzystaniem ChatGPT (OpenAI).
+
+PhotoCraft AI jest projektem open-source tworzonym i rozwijanym
+przy aktywnym wsparciu sztucznej inteligencji.
+
+Koncepcja, wymagania, kierunek rozwoju, integracje oraz testowanie
+aplikacji pozostaja pod kontrola autora.
+
+ChatGPT wspiera tworzenie kodu, projektowanie architektury,
+rozwiazywanie problemow oraz przygotowywanie dokumentacji.
+
+Projekt jest przykladem praktycznego wykorzystania vibe codingu
+i wspolpracy czlowieka z AI przy tworzeniu narzedzi fotograficznych.
+
+## Authorship & Development
+
+**Project creator and maintainer:**
+[@bogdanchr](https://github.com/bogdanchr)
+
+**Development approach:** AI-assisted development / Vibe Coding
+with ChatGPT by OpenAI.
+
+PhotoCraft AI is an open-source project developed with the assistance
+of artificial intelligence.
+
+The project creator defines its vision, requirements, functionality,
+and development direction. ChatGPT assists with coding, architecture,
+debugging, and documentation.
+
+Changes are reviewed and tested by the project creator.
+
+This project demonstrates how vibe coding and human-AI collaboration
+can be used to develop practical photography tools.
