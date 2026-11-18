@@ -18,7 +18,7 @@ from mcp.client.streamable_http import streamable_http_client
 OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
 MCP_URL = "http://127.0.0.1:8766/mcp"
 MODEL = "qwen3:14b"
-VISION_MODEL = "qwen3-vl:8b"
+VISION_MODEL = "qwen3-vl:8b-instruct"
 BASE_DIR = Path(__file__).resolve().parent
 
 EXPORT_DIR = Path(os.environ.get("PHOTOCRAFT_EXPORT_DIR", str(BASE_DIR / "exports")))
@@ -1045,7 +1045,7 @@ def ollama_chat(messages, tools, think=True):
 
 def extract_text(result):
     text = "\n".join(part.text for part in result.content if part.type == "text")
-    if result.is_error:
+    if result.isError:
         raise ValueError("Błąd MCP: " + text)
     return text
 
@@ -1153,14 +1153,14 @@ VISION_TOOLS = [
 ]
 
 
-def vision_chat(image_base64):
+def vision_chat(image_base64, user_message, metrics_report=None):
     # Krótszy prompt i większy budżet odpowiedzi ograniczają ryzyko,
     # że model zużyje limit na rozumowanie i nie zwróci opisu.
     payload = {
         "model": VISION_MODEL,
         "stream": False,
         "think": False,
-        "options": {"num_ctx": 8192, "num_predict": 2048},
+        "options": {"num_ctx": 8192, "num_predict": 4096},
         "messages": [
             {
                 "role": "user",
@@ -1180,20 +1180,18 @@ def vision_chat(image_base64):
                     "1. OCENA: po jednym rzeczowym zdaniu o kompozycji, świetle, barwach, "
                     "ostrości i roli tła; gdy brak podstaw do oceny, napisz 'nie da się pewnie ocenić'.\n"
                     "2. MOCNE STRONY: maksymalnie dwa faktyczne atuty.\n"
-                    "3. POPRAWKI: maksymalnie trzy propozycje, uporządkowane według znaczenia. "
-                    "Dla każdej podaj: CO poprawić, DLACZEGO, JAKĄ techniką oraz "
-                    "czy wymaga ręcznej pracy, maski lub narzędzia AI. "
-                    "Jeśli zdjęcie nie wymaga istotnej zmiany, powiedz to zamiast wymyślać usterki.\n"
-                    "4. SZKICE POLECEŃ DO PHOTOCRAFT: zaproponuj do trzech krótkich "
-                    "poleceń do ewentualnego zapisania i późniejszego zatwierdzenia przez fotografa. "
-                    "To są wyłącznie SUGESTIE, nigdy wykonane czynności. "
-                    "Podziel je na 'gotowe do rozważenia' (np. dodanie warstwy Jasność/Kontrast "
-                    "z podanymi wartościami, ale tylko gdy są uzasadnione), 'wymaga zaznaczenia lub maski' "
-                    "albo 'do sprawdzenia w katalogu PhotoCraft'. "
-                    "Nie sugeruj, że wszystkie techniki mają już gotową komendę automatyczną. "
-                    "Nie zgaduj współrzędnych, ID warstw ani parametrów liczbowych. "
-                    "Nie wypisuj poleceń gotowych do wykonania, jeśli wymagają nieznanych parametrów; "
-                    "wtedy opisz potrzebny wybór użytkownika.\n"
+                    "3. POPRAWKI: podaj od zera do trzech rzeczywiscie uzasadnionych korekt. "
+                    "Zero poprawek jest prawidlowym wynikiem. "
+                    "Nie proponuj zmian tylko po to, by wypelnic liste. "
+                    "Kazda korekta musi wynikac z widocznego problemu. "
+                    "Dla kazdej podaj: CO poprawic, DLACZEGO i JAKA technika. "
+                    "Wskaz, czy potrzebna jest maska lub praca reczna. "
+                    "Nie proponuj przesuwania ludzi, zmieniania twarzy ani montazu. "
+                    "Nie proponuj dodatkowego rozmywania tla, jesli wyglada dobrze. "
+                    "Odr??niaj niedoswietlone cienie od przepalonych swiatel. "
+                    "Nie nazywaj subiektywnych preferencji bledami technicznymi. "
+                    "Jesli brak istotnych problemow, napisz: Zdjecie nie wymaga korekty.\n"
+                    "4. PODSUMOWANIE: wska\u017c najwa\u017cniejsz\u0105 poprawk\u0119 lub napisz, \u017ce zdj\u0119cie nie wymaga korekty.\n"
                     "Niczego nie wykonuj, nie zapisuj plików i nie zmieniaj dokumentu. "
                     "Całość zwięźle: około 180-280 słów, bez tabeli."
                 ),
@@ -1201,6 +1199,64 @@ def vision_chat(image_base64):
             },
         ],
     }
+
+    # Przekazuj do Vision rzeczywiste polecenie uzytkownika.
+    import unicodedata
+
+    normalized = unicodedata.normalize("NFKD", user_message.casefold())
+    normalized = "".join(
+        ch for ch in normalized if not unicodedata.combining(ch)
+    )
+
+    focused_colors = (
+        any(x in normalized for x in ("opisz", "ocen", "sprawdz", "analiz"))
+        and any(x in normalized for x in ("kolor", "barw", "kontrast"))
+        and any(x in normalized for x in (
+            "wylacznie", "tylko", "nie oceniaj kompozycji"
+        ))
+    )
+
+    if focused_colors:
+        payload["messages"][0]["content"] = (
+            "/no_think\n"
+            "Jestes asystentem fotografa. Analizujesz widoczny obraz, "
+            "a nie historie edycji. Odpowiadaj po polsku.\n"
+            "Oceniaj WYLACZNIE kolory, nasycenie, kontrast i tonalnosc. "
+            "Nie opisuj kompozycji, ostrosci ani rozmieszczenia postaci. "
+            "Nie proponuj poprawek i niczego nie wykonuj.\n"
+            "Sprawdz, czy wystepuja widoczne oznaki zbyt mocnej obrobki: "
+            "przesadne nasycenie, nienaturalne odcienie skory, "
+            "dominanta barwna, zbyt twardy lub zbyt plaski kontrast, "
+            "utrata szczegolow w cieniach i swiatlach.\n"
+            "Nie zakladaj z gory, ze obraz jest poprawny ani ze jest zepsuty. "
+            "Nie wymyslaj wad, ktorych nie widac. "
+            "Jesli nie mozna czegos pewnie ocenic, powiedz to.\n"
+            "Odpowiedz krotko w czterech punktach:\n"
+            "1. BARWY I NASYCENIE\n"
+            "2. KONTRAST I TONALNOSC\n"
+            "3. SZCZEGOLY W CIENIACH I SWIATLACH\n"
+            "4. WNIOSEK TECHNICZNY\n"
+            "Dokladne polecenie uzytkownika:\n" + user_message
+        )
+    else:
+        payload["messages"][0]["content"] += (
+            "\n\nDokladne polecenie uzytkownika:\n" + user_message
+        )
+
+
+    # Dane liczbowe sa pomocnicze i nie stanowia automatycznej oceny.
+    if metrics_report:
+        payload["messages"][0]["content"] += (
+            "\n\nPOMIARY TECHNICZNE AKTUALNEGO OBRAZU:\n"
+            + metrics_report
+            + "\nNie oceniaj poprawnosci balansu bieli jedynie "
+              "na podstawie srednich RGB. "
+              "Statystyki dotycza calego kadru, nie samej skory. "
+              "Nie nazywaj clippingu pewnym, jesli dane pokazuja "
+              "tylko piksele bliskie wartosciom granicznym. "
+              "Polacz pomiary z ocena wizualna."
+        )
+
     request = urllib.request.Request(
         OLLAMA_URL,
         data=json.dumps(payload).encode("utf-8"),
@@ -1210,6 +1266,37 @@ def vision_chat(image_base64):
         result = json.load(response)
     message = result.get("message") or {}
     answer = (message.get("content") or "").strip()
+    if not answer and result.get("done_reason") == "length":
+        print("VISION: limit tokenów, ponawiam analizę krótszym promptem.")
+        retry_payload = {
+            "model": VISION_MODEL,
+            "stream": False,
+            "think": False,
+            "options": {"num_ctx": 8192, "num_predict": 8192},
+            "messages": [{
+                "role": "user",
+                "content": (
+                    "/no_think\n"
+                    "Przeanalizuj załączoną fotografię po polsku. "
+                    "Podaj krótko: kompozycję, światło, kolory, ostrość i tło. "
+                    "Wymień maksymalnie trzy konkretne poprawki, "
+                    "ale tylko jeśli są potrzebne. "
+                    "Zaproponuj techniki korekty w edytorze PhotoCraft. "
+                    "Nie zgaduj parametrów aparatu ani ustawień warstw. "
+                    "Nie wykonuj żadnych zmian. Maksymalnie 180 słów."
+                ),
+                "images": [image_base64],
+            }],
+        }
+        retry_request = urllib.request.Request(
+            OLLAMA_URL,
+            data=json.dumps(retry_payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(retry_request, timeout=300) as response:
+            retry_result = json.load(response)
+        answer = ((retry_result.get("message") or {}).get("content") or "").strip()
+
     if not answer:
         raise ValueError(
             "Model Vision nie zwrócił opisu "
@@ -1257,7 +1344,121 @@ async def analyze_photo(session, user_message, used_actions):
                 "i spróbuj ponownie."
             )
         image_base64 = base64.b64encode(export_path.read_bytes()).decode("ascii")
-        return await asyncio.to_thread(vision_chat, image_base64)
+
+        # Odczytowe pomiary tego samego PNG, ktory trafia do Vision.
+        metrics_report = None
+        metrics_data = None
+        try:
+            from vision_metrics import analyze_image
+            m = await asyncio.to_thread(analyze_image, export_path)
+            metrics_data = m
+            rgb = m["mean_rgb"]
+            sat = m["saturation"]
+            neutral = m["bright_neutral_candidates"]
+
+            lines = [
+                f"Rozdzielczosc: {m['size'][0]} x {m['size'][1]}",
+                f"Srednie RGB: {m['mean_rgb']}",
+                f"Srednia jasnosc: {m['mean_luminance']}/255",
+                f"Percentyle jasnosci 1/50/99: "
+                f"{m['luminance_p01']}/{m['luminance_p50']}/{m['luminance_p99']}",
+                f"Blisko czerni: {m['dark_luminance_pct']}%",
+                f"Blisko bieli: {m['bright_luminance_pct']}%",
+                f"Skrajne wartosci kanalow: {m['channels']}",
+                "STREFY TONALNE:",
+            ]
+
+            for name, values in m["tonal_bands"].items():
+                lines.append(
+                    f"{name}: {values['pct']}%; "
+                    f"srednie RGB={values['mean_rgb']}"
+                )
+
+            lines.extend([
+                f"NASYCENIE: mediana={sat['p50']}, "
+                f"p90={sat['p90']}, "
+                f"mocne={sat['high_pct']}%",
+                f"JASNE WZGLEDNIE NEUTRALNE OBSZARY: "
+                f"udzial={neutral['pct']}%, "
+                f"RGB={neutral['mean_rgb']}, "
+                f"roznice={neutral['channel_differences']}",
+                "UWAGA: to statystyki jednego obrazu, "
+                "nie porownanie z oryginalem. "
+                "Nie dowodza same w sobie bledu koloru.",
+            ])
+
+            metrics_report = chr(10).join(lines)
+            print("VISION METRICS |", metrics_report, flush=True)
+        except Exception as exc:
+            print("VISION METRICS | Blad:", repr(exc), flush=True)
+        analysis = await asyncio.to_thread(vision_chat, image_base64, user_message, metrics_report)
+        try:
+            from vision_recommend import match_recommendations_to_catalog
+
+            catalog = load_command_catalog()
+            suggestions = match_recommendations_to_catalog(analysis, catalog)
+
+            if suggestions and not suggestions.startswith(
+                ("Brak", "Nie wykryto")
+            ):
+                analysis += (
+                    "\n\n---\n"
+                    "NARZEDZIA PHOTOCRAFT - PROPOZYCJE (bez wykonywania):\n"
+                    + suggestions
+                )
+        except Exception as exc:
+            print(f"VISION RECOMMEND | {exc}")
+
+
+        # Niezalezna diagnostyka techniczna.
+        # Nie zmienia odpowiedzi Qwen ani dokumentu PhotoCraft.
+        if metrics_data is not None:
+            try:
+                from vision_diagnostics import diagnose_single
+
+                diagnosis = diagnose_single(metrics_data)
+                issues = diagnosis.get("issues", [])
+
+                diagnostic_lines = [
+                    "DIAGNOSTYKA TECHNICZNA (niezalezna od Qwen3-VL):"
+                ]
+
+                if issues:
+                    for issue in issues:
+                        diagnostic_lines.append(
+                            f"[{issue['severity'].upper()}] "
+                            f"{issue['message']}"
+                        )
+                        if issue.get("evidence"):
+                            diagnostic_lines.append(
+                                "Dane: " + issue["evidence"]
+                            )
+                else:
+                    diagnostic_lines.append(
+                        "Brak silnych sygnalow wedlug aktualnych heurystyk."
+                    )
+
+                if diagnosis.get("note"):
+                    diagnostic_lines.append(
+                        "Uwaga: " + diagnosis["note"]
+                    )
+
+                diagnostic_text = "\n".join(diagnostic_lines)
+                analysis += "\n\n---\n" + diagnostic_text
+
+                print(
+                    "VISION DIAGNOSTICS |",
+                    diagnostic_text,
+                    flush=True,
+                )
+            except Exception as exc:
+                print(
+                    "VISION DIAGNOSTICS | Blad:",
+                    repr(exc),
+                    flush=True,
+                )
+
+        return analysis
     finally:
         # Usuwamy wyłącznie własny plik tymczasowy, nie dotykamy dokumentu.
         export_path.unlink(missing_ok=True)
@@ -2073,6 +2274,14 @@ def select_tool_group(message):
     # Priorytet złożonej korekty; tylko jeśli to faktyczne żądanie gradientu.
     if gradient and new_layer and bc:
         return list(GRADIENT_ADJUSTMENT_TOOLS)
+
+    # Pytania o wyglad fotografii kieruj do Vision przed korektami.
+    if (
+        has(r"opisz|oce[n?]|analiz|sprawd[z?]")
+        and has(r"zdj[e?]ci|fotografi|obraz|kolor|barw|kontrast|cieni|[s?]wiat[l?]")
+    ):
+        return list(VISION_TOOLS)
+
     if levels and new_layer:
         return list(LEVELS_TOOLS)
     if levels:
@@ -3539,6 +3748,9 @@ async def process_message(message, history):
                         result_text = "Błąd MCP: " + str(error)
                         print("SZCZEGÓŁY BŁĘDU MCP:", repr(error), flush=True)
                     print("Wynik:", result_text[:2000], flush=True)
+                    if name == "photocraft_analyze_photo":
+                        return result_text
+
                     tool_results.append(result_text)
                     messages.append(
                         {"role": "tool", "tool_name": name, "content": result_text}

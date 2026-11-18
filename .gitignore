@@ -56,3 +56,11 @@ comfy_bridge/wyniki_sam3/
 # Lokalna konfiguracja uzytkownika
 local_config.bat
 photocraft-token.txt
+
+# Lokalne kopie i pliki testowe Vision
+app.py.backup-*
+vision_recommend.py.backup-*
+vision_diagnostics_backup.py
+vision_diagnostics_v1_1.py
+/oryginal.jpg
+/test.jpg
