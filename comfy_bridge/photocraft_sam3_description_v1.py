@@ -32,7 +32,7 @@ RESULT_DIR = BRIDGE_DIR / "wyniki_sam3"
 
 def text(result):
     message = "\n".join(part.text for part in result.content if part.type == "text")
-    if result.is_error:
+    if result.isError:
         raise RuntimeError("MCP: " + message)
     return message
 

@@ -36,7 +36,7 @@ IMPORT_DIR = Path(os.environ.get("PHOTOCRAFT_IMPORT_DIR", str(BASE_DIR / "import
 
 def result_text(result):
     text = "\n".join(part.text for part in result.content if part.type == "text")
-    if result.is_error:
+    if result.isError:
         raise RuntimeError("MCP: " + text)
     return text
 

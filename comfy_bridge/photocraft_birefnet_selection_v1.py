@@ -37,7 +37,7 @@ COMFY_PYTHON = Path(os.environ.get("PHOTOCRAFT_COMFY_PYTHON", ""))
 
 def result_text(result):
     text = "\n".join(part.text for part in result.content if part.type == "text")
-    if result.is_error:
+    if result.isError:
         raise RuntimeError("MCP: " + text)
     return text
 
