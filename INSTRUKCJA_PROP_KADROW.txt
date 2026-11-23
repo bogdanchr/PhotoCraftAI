@@ -1,0 +1,23 @@
+PHOTOCRAFT AI — KADROWANIE v3.1 — JEDNA SESJA, WIELE KADRÓW
+
+1. Rozpakuj pliki do D:\PhotoCraftAI (podmień stary skrypt i BAT).
+2. Umieść oryginalne zdjęcie testowe w tym folderze i otwórz je w PhotoCraft.
+3. Uruchom PhotoCraft MCP i Ollama. Uruchom Propozycje_kadrow_AI.bat.
+4. Qwen3-VL przeanalizuje zdjęcie tylko JEDEN RAZ.
+5. Wpisuj kolejne polecenia i zatwierdzaj Enterem, np.:
+   naturalny kadr 3:2
+   grupa w prawym dolnym mocnym punkcie
+   szeroki kadr 3:2
+   wydruk 30x40 cm pionowy
+6. Podglądy zapisują się w folderze historia_kadrow\kadr_001.png, kadr_002.png itd.
+   Najnowszy jest także w podglad_trzech_kadrow.png.
+   Możesz otwierać kolejne pliki PNG, gdy program pyta już o następny kadr.
+7. Wpisz KONIEC, by zakończyć sesję.
+
+Ważne:
+- Test nie wysyła ŻADNYCH poleceń edycyjnych MCP i nie zapisuje zdjęcia.
+- Skrypt pomija identyczne prostokąty kadru zamiast pokazywać duplikaty.
+- Jeśli w PhotoCraft zmienisz zdjęcie podczas pracy, zakończ i uruchom test ponownie;
+  skrypt przez całą sesję pracuje na jednym obrazie odczytanym na starcie.
+- Wydruk: podane PPI wynika z pikseli; nie ocenia artystycznej jakości ani nie skaluje.
+- Model identyfikuje prostokąt grupy, nie ocenia automatycznie reguł kompozycyjnych.

@@ -1,0 +1,17 @@
+TEST KADROWANIA PHOTOCRAFT MCP — WERSJA POPRAWIONA v2
+
+Dlaczego poprawka:
+- PhotoCraft pokazuje nazwę zdjęcia ze spacjami, a skrypt sprawdzał podkreślenia.
+- Komunikat o błędzie był zasłonięty przez TaskGroup.
+
+1. Rozpakuj pliki do D:\PhotoCraftAI i zastąp poprzedni test_kadrowania_mcp.py.
+2. Otwórz zdjęcie testowe w PhotoCraft (kopię, bez dodatkowych warstw).
+3. Sprawdź, że PhotoCraft MCP działa.
+4. Uruchom Test_kadrowania_MCP.bat.
+5. Skrypt wyświetli plan, poprosi o wpisanie KADRUJ, a potem wyśle image.crop tylko raz.
+6. Sprawdź w PhotoCraft, czy kadr się zmienił. NIE uruchamiaj testu ponownie na już skadrowanym dokumencie.
+7. Rozszerz kadr ręcznie i sprawdź, czy wracają niewidoczne piksele.
+8. Wyślij raport_testu_kadrowania_MCP.txt i informację, czy odzyskałeś pełne zdjęcie.
+
+UWAGA: skrypt nie zapisuje dokumentu, nie cofa i nie powtarza sam operacji.
+W razie błędu po zatwierdzeniu sprawdź stan PhotoCraft zanim cokolwiek ponowisz.

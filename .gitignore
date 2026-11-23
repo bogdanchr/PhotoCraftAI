@@ -64,3 +64,27 @@ vision_diagnostics_backup.py
 vision_diagnostics_v1_1.py
 /oryginal.jpg
 /test.jpg
+
+# Lokalne dane testowe i podglady
+/test_data/
+/crop_previews/
+/historia_kadrow/
+/historia_katalogow/
+/diagnostyka_mcp/
+
+# Raporty generowane przez skrypty
+/raport_*.txt
+/raport_*.json
+/audyt_kadrowania_MCP.txt
+/propozycje_kadrow.json
+/podglad_trzech_kadrow.png
+
+# Lokalne zdjecia w katalogu glownym
+/*.jpg
+/*.jpeg
+/*.png
+
+# Lokalne zdjecia w katalogu glownym
+/*.jpg
+/*.jpeg
+/*.png
