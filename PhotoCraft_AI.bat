@@ -10,7 +10,7 @@ rem Domyslne ustawienia
 set "PC=C:\Program Files\PhotoCraft"
 set "EXPORT_DIR=%BASE%exports"
 set "IMPORT_DIR=%BASE%import"
-set "COMFY_ROOT=D:\ComfyUI_flux"
+set "COMFY_ROOT="
 
 rem Wczytaj lokalne ustawienia uzytkownika
 if exist "%BASE%local_config.bat" call "%BASE%local_config.bat"
@@ -134,6 +134,7 @@ call :port_open 8188
 if "%PORT_OPEN%"=="1" goto comfy_ready
 rem Nie odpalaj ponownie podczas ladowania: szukaj procesu po sciezce do main.py.
 rem PowerShell odpalany poza blokiem IF, aby blad skladni nie przerwal calego BAT.
+if not defined COMFY_ROOT goto comfy_no_config
 set "COMFY_ROOT_CHECK=%COMFY_ROOT%"
 powershell.exe -NoProfile -NonInteractive -Command "$p=Get-CimInstance Win32_Process -Filter 'Name = ''python.exe'' OR Name = ''pythonw.exe''' -ErrorAction SilentlyContinue; if (@($p | Where-Object { $_.CommandLine -match 'ComfyUI[\\/]main\.py' -and $_.CommandLine -like ('*' + $env:COMFY_ROOT_CHECK + '*') }).Count -gt 0) { exit 0 } else { exit 1 }" >nul 2>nul
 if not errorlevel 1 goto comfy_loading
@@ -150,6 +151,10 @@ exit /b 0
 :comfy_loading
 echo   [OK] Proces ComfyUI juz dziala - moze jeszcze ladowac modele
 >>"%LOG%" echo ComfyUI: process already running, waiting for port
+exit /b 0
+:comfy_no_config
+echo   [BLAD] Ustaw COMFY_ROOT w local_config.bat
+>>"%LOG%" echo ComfyUI: configuration missing
 exit /b 0
 :comfy_no_python
 echo   [BLAD] Brak: "%COMFY_PY%"
